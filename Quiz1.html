@@ -15,7 +15,7 @@
   .question.active { display: block; }
   label { display: block; margin-bottom: 8px; font-weight: bold; color: #2a5d34; }
   input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
-  button { padding: 12px 20px; background-color: #2a5d34; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; }
+  button { padding: 12px 20px; background-color: #2a5d34; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; margin-bottom: 10px; }
   button:hover { background-color: #1e4124; }
   #result { margin-top: 30px; font-weight: bold; text-align: center; font-size: 24px; color: #2a5d34; }
   .progress { height: 10px; background: #ddd; border-radius: 5px; margin-top: 10px; }
@@ -35,24 +35,34 @@
   <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
 
   <div class="question active" id="q1">
+    <label for="sex">Select your sex:</label>
+    <select id="sex">
+      <option value="">--Select--</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+    <button onclick="nextQuestion()">Next</button>
+  </div>
+
+  <div class="question" id="q2">
     <label for="weight">Your weight (kg):</label>
     <input type="number" id="weight" min="30" max="200">
     <button onclick="nextQuestion()">Next</button>
   </div>
 
-  <div class="question" id="q2">
+  <div class="question" id="q3">
     <label for="height">Your height (cm):</label>
     <input type="number" id="height" min="120" max="220">
     <button onclick="nextQuestion()">Next</button>
   </div>
 
-  <div class="question" id="q3">
+  <div class="question" id="q4">
     <label for="age">Your age:</label>
     <input type="number" id="age" min="18" max="100">
     <button onclick="nextQuestion()">Next</button>
   </div>
 
-  <div class="question" id="q4">
+  <div class="question" id="q5">
     <label for="activity">Activity level:</label>
     <select id="activity">
       <option value="1.2">Sedentary (little or no exercise)</option>
@@ -69,10 +79,10 @@
 
 <script>
 let current = 1;
-const total = 4;
+const total = 5;
 
 function nextQuestion() {
-  const input = document.querySelector(`#q${current} input`);
+  const input = document.querySelector(`#q${current} input, #q${current} select`);
   if (!input.value) {
     alert("Please fill in a value to continue.");
     return;
@@ -92,20 +102,27 @@ function updateProgress() {
 }
 
 function calculateCalories() {
+  const sex = document.getElementById('sex').value;
   const weight = parseFloat(document.getElementById('weight').value);
   const height = parseFloat(document.getElementById('height').value);
   const age = parseFloat(document.getElementById('age').value);
   const activity = parseFloat(document.getElementById('activity').value);
 
-  if(!weight || !height || !age) {
+  if (!sex || !weight || !height || !age) {
     document.getElementById('result').innerText = "Please fill in all fields.";
     return;
   }
 
-  const bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  let bmr;
+  if (sex === "male") {
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  } else {
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+  }
+
   const calories = Math.round(bmr * activity);
 
-  document.getElementById('q4').style.display = 'none';
+  document.getElementById(`q${total}`).style.display = 'none';
   document.getElementById('progress-bar').style.width = "100%";
   document.getElementById('result').innerText = `Estimated daily calories: ${calories} kcal/day`;
 }
