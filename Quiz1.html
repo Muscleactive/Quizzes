@@ -1,170 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calorie Needs Quiz</title>
-<style>
-  body { font-family: Arial, sans-serif; background: #f7f6f3; margin: 0; padding: 0; }
-  .container { max-width: 520px; margin: 40px auto; background: #fff; border-radius: 14px; padding: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-  .title-card { background-color: #4a7c59; color: #fff; text-align: center; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-  .title-card h1 { margin: 0; font-size: 24px; }
-  h2 { color: #2a5d34; text-align: center; margin-bottom: 10px; }
-  p { text-align: center; margin-bottom: 20px; }
-  .question { display: none; margin-top: 20px; }
-  .question.active { display: block; }
-  label { display: block; margin-bottom: 8px; font-weight: bold; color: #2a5d34; }
-  input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
-  button { padding: 12px 20px; background-color: #2a5d34; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; margin-bottom: 10px; }
-  button:hover { background-color: #1e4124; }
-  #result { margin-top: 30px; font-weight: bold; text-align: center; font-size: 24px; color: #2a5d34; }
-  .progress { height: 10px; background: #ddd; border-radius: 5px; margin-top: 10px; }
-  .progress-bar { height: 10px; background: #4a7c59; width: 0%; border-radius: 5px; transition: width 0.3s; }
-  .bmi-info { font-size: 18px; margin-top: 15px; color: #444; text-align: center; }
-  #retake, #blog-link { display: none; background-color: #4a7c59; margin-top: 20px; }
-  #retake:hover, #blog-link:hover { background-color: #1e4124; }
-</style>
+  <meta charset="UTF-8">
+  <title>Calorie Needs Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f9f9f9;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    form {
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      text-align: left;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 20px;
+      background: #ecf0f1;
+      border-radius: 10px;
+      display: none;
+    }
+    .calories {
+      font-size: 22px;
+      font-weight: bold;
+      color: #27ae60;
+    }
+    .bmi {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    .note {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #555;
+    }
+    .btn-secondary {
+      background: #95a5a6;
+      margin-left: 10px;
+    }
+    .btn-secondary:hover {
+      background: #7f8c8d;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="title-card">
-    <h1>What’s Your Daily Calorie Range?</h1>
+  <h1>Calorie Needs Quiz</h1>
+  <p>Find out how many calories you need per day to <strong>maintain your current weight</strong>.</p>
+
+  <form id="calorieForm">
+    <label>Age: <input type="number" id="age" required></label>
+    <label>Gender:
+      <select id="gender" required>
+        <option value="">Select...</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </label>
+    <label>Height (cm): <input type="number" id="height" required></label>
+    <label>Weight (kg): <input type="number" id="weight" required></label>
+    <label>Activity level:
+      <select id="activity" required>
+        <option value="1.2">Sedentary (little/no exercise)</option>
+        <option value="1.375">Lightly active (light exercise/sports 1-3 days/week)</option>
+        <option value="1.55">Moderately active (moderate exercise 3-5 days/week)</option>
+        <option value="1.725">Very active (hard exercise 6-7 days/week)</option>
+        <option value="1.9">Super active (very hard exercise/physical job)</option>
+      </select>
+    </label>
+    <button type="submit">Calculate</button>
+  </form>
+
+  <div id="result">
+    <p class="calories" id="calories"></p>
+    <p class="bmi" id="bmi"></p>
+    <p id="advice"></p>
+    <p class="note">⚖️ This number is for <strong>maintenance</strong>.  
+      If you want to lose weight, you’d need to eat fewer calories than this.  
+      If you want to gain weight, you’d need more.</p>
+    <button onclick="resetForm()">Retake Quiz</button>
+    <button class="btn-secondary" onclick="window.location.href='https://keepwellnutrition.com/blog/f/how-many-calories-do-you-really-need'">Read Full Blog</button>
   </div>
 
-  <h2>Estimate Your Daily Calorie Needs</h2>
-  <p>Answer a few quick questions to see how your body size and activity affect your energy needs.</p>
-  
-  <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+  <script>
+    document.getElementById("calorieForm").addEventListener("submit", function(event) {
+      event.preventDefault();
 
-  <div class="question active" id="q1">
-    <label for="sex">Select your sex:</label>
-    <select id="sex">
-      <option value="">--Select--</option>
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-    </select>
-    <button onclick="nextQuestion()">Next</button>
-  </div>
+      const age = parseInt(document.getElementById("age").value);
+      const gender = document.getElementById("gender").value;
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const activity = parseFloat(document.getElementById("activity").value);
 
-  <div class="question" id="q2">
-    <label for="weight">Your weight (kg):</label>
-    <input type="number" id="weight" min="30" max="200">
-    <button onclick="nextQuestion()">Next</button>
-  </div>
+      // Mifflin-St Jeor equation
+      let bmr;
+      if (gender === "male") {
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+      } else {
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+      }
 
-  <div class="question" id="q3">
-    <label for="height">Your height (cm):</label>
-    <input type="number" id="height" min="120" max="220">
-    <button onclick="nextQuestion()">Next</button>
-  </div>
+      const calories = Math.round(bmr * activity);
 
-  <div class="question" id="q4">
-    <label for="age">Your age:</label>
-    <input type="number" id="age" min="18" max="100">
-    <button onclick="nextQuestion()">Next</button>
-  </div>
+      // BMI calculation
+      const bmi = (weight / ((height/100) ** 2)).toFixed(1);
+      let category, advice;
+      if (bmi < 18.5) {
+        category = "underweight";
+        advice = "You may benefit from gaining some weight — consider speaking with a healthcare provider.";
+      } else if (bmi < 25) {
+        category = "normal weight";
+        advice = "Great job — keep maintaining a balanced lifestyle!";
+      } else if (bmi < 30) {
+        category = "overweight";
+        advice = "Your calories above are for maintaining weight. To lose, aim for a calorie deficit through diet and exercise.";
+      } else {
+        category = "obese";
+        advice = "Your calories above are for maintaining weight. Weight loss would require fewer calories and more activity — speak with a professional for tailored guidance.";
+      }
 
-  <div class="question" id="q5">
-    <label for="activity">Activity level:</label>
-    <select id="activity">
-      <option value="1.2">Sedentary (little or no exercise)</option>
-      <option value="1.375">Lightly active (1–3 days/week)</option>
-      <option value="1.55">Moderately active (3–5 days/week)</option>
-      <option value="1.725">Very active (6–7 days/week)</option>
-      <option value="1.9">Extra active (hard exercise or physical job)</option>
-    </select>
-    <button onclick="calculateCalories()">Get My Estimate</button>
-  </div>
+      document.getElementById("calories").textContent = "Estimated daily calories to maintain your weight: " + calories + " kcal/day";
+      document.getElementById("bmi").textContent = "Your BMI is " + bmi + ", which is considered " + category + ".";
+      document.getElementById("advice").textContent = advice;
 
-  <div id="result"></div>
-  <div class="bmi-info" id="bmi-info"></div>
-  <button id="retake" onclick="resetQuiz()">Retake Quiz</button>
-  <button id="blog-link" onclick="window.open('https://keepwellnutrition.com/blog/f/how-many-calories-do-you-really-need', '_blank')">Read Full Blog</button>
-</div>
+      document.getElementById("result").style.display = "block";
+      document.getElementById("calorieForm").style.display = "none";
+    });
 
-<script>
-let current = 1;
-const total = 5;
-
-function nextQuestion() {
-  const input = document.querySelector(`#q${current} input, #q${current} select`);
-  if (!input.value) {
-    alert("Please fill in a value to continue.");
-    return;
-  }
-
-  document.getElementById(`q${current}`).classList.remove('active');
-  current++;
-  if (current <= total) {
-    document.getElementById(`q${current}`).classList.add('active');
-    updateProgress();
-  }
-}
-
-function updateProgress() {
-  const percent = ((current-1)/total) * 100;
-  document.getElementById('progress-bar').style.width = percent + "%";
-}
-
-function calculateCalories() {
-  const sex = document.getElementById('sex').value;
-  const weight = parseFloat(document.getElementById('weight').value);
-  const height = parseFloat(document.getElementById('height').value);
-  const age = parseFloat(document.getElementById('age').value);
-  const activity = parseFloat(document.getElementById('activity').value);
-
-  if (!sex || !weight || !height || !age) {
-    document.getElementById('result').innerText = "Please fill in all fields.";
-    return;
-  }
-
-  let bmr;
-  if (sex === "male") {
-    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-  } else {
-    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
-  }
-
-  const calories = Math.round(bmr * activity);
-  const bmi = (weight / ((height/100) * (height/100))).toFixed(1);
-  let category = "";
-  if (bmi < 18.5) category = "underweight";
-  else if (bmi < 25) category = "a healthy weight";
-  else if (bmi < 30) category = "overweight";
-  else category = "obese";
-
-  document.getElementById(`q${total}`).style.display = 'none';
-  document.getElementById('progress-bar').style.width = "100%";
-
-  document.getElementById('result').innerText = `Estimated daily calories: ${calories} kcal/day`;
-  document.getElementById('bmi-info').innerText = `Your BMI is ${bmi}, which is considered ${category}.`;
-  document.getElementById('retake').style.display = 'block';
-  document.getElementById('blog-link').style.display = 'block';
-}
-
-function resetQuiz() {
-  current = 1;
-  for (let i = 1; i <= total; i++) {
-    const q = document.getElementById(`q${i}`);
-    q.style.display = 'block';
-    q.classList.remove('active');
-  }
-  document.getElementById('q1').classList.add('active');
-  document.getElementById('progress-bar').style.width = "0%";
-  document.getElementById('result').innerText = "";
-  document.getElementById('bmi-info').innerText = "";
-  document.getElementById('retake').style.display = 'none';
-  document.getElementById('blog-link').style.display = 'none';
-  document.getElementById('sex').value = "";
-  document.getElementById('weight').value = "";
-  document.getElementById('height').value = "";
-  document.getElementById('age').value = "";
-  document.getElementById('activity').value = "1.2";
-}
-</script>
+    function resetForm() {
+      document.getElementById("calorieForm").reset();
+      document.getElementById("calorieForm").style.display = "block";
+      document.getElementById("result").style.display = "none";
+    }
+  </script>
 
 </body>
 </html>
-
 
